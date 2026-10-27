@@ -31,7 +31,7 @@ from rubric.autograders.schemas import (
             OneShotOutput(
                 criteria_evaluations=[
                     CriterionEvaluation(
-                        criterion_idx=0, explanation="Recorded result", criterion_status="MET"
+                        criterion_number=1, explanation="Recorded result", criterion_status="MET"
                     )
                 ]
             ),
