@@ -3,6 +3,7 @@
 import asyncio
 
 from rubric.autograders import Autograder
+from rubric.autograders._prompt_data import EVIDENCE_INSTRUCTIONS, encode_evidence
 from rubric.autograders.schemas import PerCriterionOutput
 from rubric.types import (
     Criterion,
@@ -145,7 +146,7 @@ class PerCriterionGrader(Autograder):
         self, criterion: Criterion, to_grade: str, query: str | None = None
     ) -> CriterionReport:
         criterion_type = "negative" if criterion.weight < 0 else "positive"
-        query_text = f"<query>{query}</query>" if query else ""
+        query_text = f"<query>{encode_evidence(query)}</query>" if query else ""
         user_prompt = f"""<criterion_type>
 {criterion_type}
 </criterion_type>
@@ -154,10 +155,12 @@ class PerCriterionGrader(Autograder):
 {criterion.requirement}
 </criterion>
 
+{EVIDENCE_INSTRUCTIONS}
+
 {query_text}
 
 <response>
-{to_grade}
+{encode_evidence(to_grade)}
 </response>"""
 
         # Call generate_fn - user handles validation and retries

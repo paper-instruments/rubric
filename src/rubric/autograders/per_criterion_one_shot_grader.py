@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from rubric.autograders import Autograder
+from rubric.autograders._prompt_data import EVIDENCE_INSTRUCTIONS, encode_evidence
 from rubric.autograders.schemas import OneShotOutput
 from rubric.types import (
     Criterion,
@@ -124,16 +125,18 @@ class PerCriterionOneShotGrader(Autograder):
             )
 
         criteria_text = "\n".join(criteria_lines)
-        query_text = f"<query>{query}</query>" if query else ""
+        query_text = f"<query>{encode_evidence(query)}</query>" if query else ""
         user_prompt = f"""Evaluate the response against the following criteria:
 <criteria>
 {criteria_text}
 </criteria>
 
+{EVIDENCE_INSTRUCTIONS}
+
 {query_text}
 
 <response>
-{to_grade}
+{encode_evidence(to_grade)}
 </response>
 
 Provide your evaluation as JSON only."""
