@@ -1,6 +1,8 @@
+from importlib.metadata import version
+
 import pytest
 
-from rubric import Criterion, Rubric
+from rubric import Criterion, CriterionEvaluation, Rubric, __version__
 from rubric.autograders import PerCriterionGrader
 
 MOCK_DATASET = [
@@ -20,6 +22,17 @@ MOCK_DATASET = [
         "expected": "red, blue, yellow",
     },
 ]
+
+
+def test_installed_patch_version_and_released_schema_match():
+    # This file also runs against the built wheel and source distribution in release CI.
+    assert __version__ == version("rubric") == "2.2.1"
+    assert "criterion_number" in CriterionEvaluation.model_fields
+    assert "criterion_idx" not in CriterionEvaluation.model_fields
+    result = CriterionEvaluation(
+        criterion_number=1, explanation="Recorded result", criterion_status="MET"
+    )
+    assert result.criterion_number == 1
 
 
 @pytest.mark.asyncio
