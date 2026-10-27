@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from rubric.autograders import Autograder
+from rubric.autograders._prompt_data import EVIDENCE_INSTRUCTIONS, encode_evidence
 from rubric.autograders.schemas import RubricAsJudgeOutput
 from rubric.types import (
     Criterion,
@@ -127,7 +128,7 @@ class RubricAsJudgeGrader(Autograder):
             )
 
         criteria_text = "\n".join(criteria_lines)
-        query_text = f"<query>{query}</query>" if query else ""
+        query_text = f"<query>{encode_evidence(query)}</query>" if query else ""
         user_prompt = f"""Mentally evaluate each criterion below, compute the weighted score \
 using the logic from the system prompt, and return a single holistic score from 0-100.
 
@@ -135,10 +136,12 @@ using the logic from the system prompt, and return a single holistic score from 
 {criteria_text}
 </criteria>
 
+{EVIDENCE_INSTRUCTIONS}
+
 {query_text}
 
 <response>
-{to_grade}
+{encode_evidence(to_grade)}
 </response>
 
 Return your evaluation as JSON only."""

@@ -26,6 +26,19 @@
 uv add rubric
 ```
 
+## Untrusted submissions
+
+The built-in graders encode query and response text as JSON strings inside their
+prompt blocks. Literal markup in a submission cannot close those blocks, and the
+judge is instructed to decode the strings as evidence rather than instructions.
+Custom generation functions still receive the system and user prompts as strings.
+
+This reduces delimiter spoofing, not every form of prompt injection. Keep criteria
+and grading instructions trusted, validate judge output, and evaluate judge behavior
+on representative submissions before changing a production scoring pipeline.
+The encoding changes model-visible prompts; it does not change output schemas or
+score aggregation.
+
 ## Usage
 
 ### Quick Start with Default Generate Functions
